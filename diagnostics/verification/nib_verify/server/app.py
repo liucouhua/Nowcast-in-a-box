@@ -86,6 +86,7 @@ def create_app(
     host: HostConfig | None = None,
     access=None,
     access_error: str | None = None,
+    result_visualization=None,
 ):
     """Build the app around a verification root, a config directory and a provider."""
     if not HAS_FASTAPI:  # pragma: no cover
@@ -580,6 +581,12 @@ def create_app(
         @app.get("/")
         def index_missing():
             return JSONResponse({"error": "the static files are missing"})
+
+    @app.get("/visualization")
+    def visualization():
+        if result_visualization is not None:
+            return result_visualization()
+        return {"models": [], "message": "No visualization was selected for this run."}
 
     app.state.library = library
     app.state.jobs = jobs
